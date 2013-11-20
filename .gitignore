@@ -27,3 +27,7 @@ proguard/
 *.ipr
 *.iws
 .idea/
+/assets
+/lint.xml
+/proguard-project.txt
+/project.properties
