@@ -59,6 +59,9 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class MoverActivity extends Activity {
 
+	private final static String SYSTEM_APP_FOLDER = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ? "/system/priv-app/"
+			: "/system/app/";
+
 	/**
 	 * Shows an error dialog with the specified text
 	 * 
@@ -67,7 +70,7 @@ public class MoverActivity extends Activity {
 	 */
 	private void showErrorDialog(final String text) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Error").setMessage(text).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setTitle("Error").setMessage(text).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, int id) {
 				try {
 					dialog.dismiss();
@@ -203,7 +206,7 @@ public class MoverActivity extends Activity {
 
 						// update necessary?
 						if ((tmpAlreadySys && tmp.sourceDir.contains("/data/app/"))
-								|| (!tmpAlreadySys && tmp.sourceDir.contains("/system/app/"))) {
+								|| (!tmpAlreadySys && tmp.sourceDir.contains(SYSTEM_APP_FOLDER))) {
 							try {
 								tmp = pm.getApplicationInfo(tmp.packageName, 0);
 							} catch (NameNotFoundException e1) {
@@ -252,7 +255,7 @@ public class MoverActivity extends Activity {
 									});
 							builder.create().show();
 							return;
-						} else if (!alreadySys && tmp.sourceDir.contains("/system/app/")) {
+						} else if (!alreadySys && tmp.sourceDir.contains(SYSTEM_APP_FOLDER)) {
 							showErrorDialog("Can not move " + appName + ": Undefined app status. You might need to reboot once.");
 							if (Logger.LOG)
 								Logger.log("Undefined app status: IsSystem = " + alreadySys + " path = " + tmp.sourceDir);
@@ -276,7 +279,7 @@ public class MoverActivity extends Activity {
 
 						AlertDialog.Builder b = new AlertDialog.Builder(MoverActivity.this);
 						b.setMessage("Convert " + appName + " to " + (alreadySys ? "normal" : "system") + " app?");
-						b.setPositiveButton("Yes", new OnClickListener() {
+						b.setPositiveButton(android.R.string.yes, new OnClickListener() {
 							@SuppressWarnings("deprecation")
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -308,10 +311,10 @@ public class MoverActivity extends Activity {
 										List<String> output = null;
 										if (!alreadySys) {
 											if (app.sourceDir.endsWith("/pkg.apk")) {
-												newFile = "/system/app/" + app.packageName + "-asec.apk";
+												newFile = SYSTEM_APP_FOLDER + app.packageName + "-asec.apk";
 												if (!RootTools.remount("/mnt", "rw")) {
 													if (Logger.LOG)
-														Logger.log("Can not revmount /mnt");
+														Logger.log("Can not remount /mnt");
 													showErrorDialog("Can not remount /mnt/asec");
 													return;
 												}
@@ -319,15 +322,15 @@ public class MoverActivity extends Activity {
 												if (Logger.LOG)
 													Logger.log("source ends with /pkg.apk -> paid app");
 											} else {
-												newFile = app.sourceDir.replace("/data/app/", "/system/app/");
-												mvcmd = "busybox mv " + app.sourceDir + " /system/app/";
+												newFile = app.sourceDir.replace("/data/app/", SYSTEM_APP_FOLDER);
+												mvcmd = "busybox mv " + app.sourceDir + " " + SYSTEM_APP_FOLDER;
 											}
 										} else {
 											if (app.sourceDir.endsWith("/pkg.apk")) {
 												newFile = "/data/app/" + app.packageName + ".apk";
 												mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
 											} else {
-												newFile = app.sourceDir.replace("/system/app/", "/data/app/");
+												newFile = app.sourceDir.replace(SYSTEM_APP_FOLDER, "/data/app/");
 												mvcmd = "busybox mv " + app.sourceDir + " /data/app/";
 											}
 										}
@@ -377,7 +380,7 @@ public class MoverActivity extends Activity {
 														+ " successfully moved, you need to reboot your device.\nReboot now?");
 												if (Logger.LOG)
 													Logger.log("successfully moved");
-												b2.setPositiveButton("Yes", new OnClickListener() {
+												b2.setPositiveButton(android.R.string.yes, new OnClickListener() {
 													@Override
 													public void onClick(final DialogInterface dialog, int which) {
 														if (Logger.LOG)
@@ -397,7 +400,7 @@ public class MoverActivity extends Activity {
 														}
 													}
 												});
-												b2.setNegativeButton("No", new OnClickListener() {
+												b2.setNegativeButton(android.R.string.no, new OnClickListener() {
 													@Override
 													public void onClick(final DialogInterface dialog, int which) {
 														if (Logger.LOG)
@@ -428,7 +431,7 @@ public class MoverActivity extends Activity {
 								}
 							}
 						});
-						b.setNegativeButton("No", new OnClickListener() {
+						b.setNegativeButton(android.R.string.no, new OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								try {
