@@ -371,8 +371,6 @@ public class MoverActivity extends Activity {
 													}
 												}
 
-												apps.remove(position);
-												icons.remove(position);
 												view.setVisibility(View.GONE);
 												view.setTag("MOVED");
 												AlertDialog.Builder b2 = new AlertDialog.Builder(MoverActivity.this);
