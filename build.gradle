@@ -10,10 +10,33 @@ android {
         targetSdkVersion 17
     }
 
+    signingConfigs {
+        release
+    }
+
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            zipAlign true
         }
     }
 }
+
+
+dependencies {
+    compile files('RootTools2.6.jar')
+}
+
+def props = new Properties()
+
+props.load(new FileInputStream(project.file("key.properties")))
+
+android.signingConfigs.release.storeFile project.file(props.keyStore)
+
+android.signingConfigs.release.storePassword props.keyStorePassword
+
+android.signingConfigs.release.keyAlias props.keyAlias
+
+android.signingConfigs.release.keyPassword props.keyAliasPassword
