@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:text="This app can damange your device! Many apps won't work when moved to another location and they might appear to be uninstalled then! The app does not offer a way to move these apps back if that happens!\nMake a system backup before using this app! Only continue if you really know what you're doing!"
+            android:id="@+id/t" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_height="wrap_content"
+            android:text="I understand the risk and act on my own responsibility. Do not show this dialog again."
+            android:id="@+id/c" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/b"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+</ScrollView>
+
