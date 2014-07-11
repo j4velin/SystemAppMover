@@ -59,7 +59,7 @@ public class AppPicker extends AsyncTask<Void, Void, Void> {
 		try {
 			progress.cancel();
 		} catch (IllegalArgumentException e) {
-			if (Logger.LOG)
+			if (BuildConfig.DEBUG)
 				Logger.log(e);
 		}
 		if (apps == null || apps.isEmpty()) {
