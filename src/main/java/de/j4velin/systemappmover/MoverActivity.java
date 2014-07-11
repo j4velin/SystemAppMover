@@ -31,7 +31,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -57,6 +56,7 @@ public class MoverActivity extends Activity {
                 try {
                     dialog.dismiss();
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -90,6 +90,7 @@ public class MoverActivity extends Activity {
                     getSharedPreferences("settings", MODE_PRIVATE).edit().putBoolean("warningRead", true).commit();
                     d.dismiss();
                 } else {
+                    d.dismiss();
                     finish();
                 }
             }
