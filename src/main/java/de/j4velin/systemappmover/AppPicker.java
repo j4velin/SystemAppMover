@@ -76,8 +76,8 @@ public class AppPicker extends AsyncTask<Void, Void, Void> {
             Collections.sort(apps, new Comparator<ApplicationInfo>() {
                 public int compare(final ApplicationInfo app1, final ApplicationInfo app2) {
                     try {
-                        return app1.loadLabel(pm).toString()
-                                .compareTo(app2.loadLabel(pm).toString());
+                        return app1.loadLabel(pm).toString().toLowerCase()
+                                .compareTo(app2.loadLabel(pm).toString().toLowerCase());
                     } catch (Exception e) {
                         e.printStackTrace();
                         return 0;
