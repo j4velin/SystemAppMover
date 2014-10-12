@@ -16,8 +16,6 @@
 
 package de.j4velin.systemappmover;
 
-import com.stericson.RootTools.*;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,16 +31,19 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.stericson.RootTools.RootTools;
+
 /**
  * The main activity.
- *
+ * <p/>
  * All the logic starts in the AppPicker, which is started from the checkForRoot
  * method if root is available
  */
 public class MoverActivity extends Activity {
 
-    final static String SYSTEM_APP_FOLDER = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ? "/system/priv-app/"
-            : "/system/app/";
+    final static String SYSTEM_APP_FOLDER =
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ?
+                    "/system/priv-app/" : "/system/app/";
 
     /**
      * Shows an error dialog with the specified text
@@ -51,15 +52,16 @@ public class MoverActivity extends Activity {
      */
     void showErrorDialog(final String text) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Error").setMessage(text).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, int id) {
-                try {
-                    dialog.dismiss();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        builder.setTitle("Error").setMessage(text)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        try {
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
         builder.create().show();
     }
 
@@ -87,7 +89,8 @@ public class MoverActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (c.isChecked()) {
-                    getSharedPreferences("settings", MODE_PRIVATE).edit().putBoolean("warningRead", true).commit();
+                    getSharedPreferences("settings", MODE_PRIVATE).edit()
+                            .putBoolean("warningRead", true).commit();
                     d.dismiss();
                 } else {
                     d.dismiss();
@@ -111,7 +114,8 @@ public class MoverActivity extends Activity {
      * Uses the RootTools library to check for root and busybox
      */
     private void checkForRoot() {
-        final ProgressDialog progress = ProgressDialog.show(this, "", "Waiting for root access", true);
+        final ProgressDialog progress =
+                ProgressDialog.show(this, "", "Waiting for root access", true);
         progress.show();
         final TextView error = (TextView) findViewById(R.id.error);
         final Handler h = new Handler();
@@ -119,18 +123,19 @@ public class MoverActivity extends Activity {
             @Override
             public void run() {
                 if (!RootTools.isRootAvailable()) {
-                    if (progress == null || !progress.isShowing())
-                        return;
+                    if (progress == null || !progress.isShowing()) return;
                     progress.cancel();
                     h.post(new Runnable() {
                         @Override
                         public void run() {
-                            error.setText("Your device seems not to be rooted!\nThis app requires root access and does not work without.\n\nClick [here] to uninstall.");
+                            error.setText(
+                                    "Your device seems not to be rooted!\nThis app requires root access and does not work without.\n\nClick [here] to uninstall.");
                             // ask user to delete app on non-rooted devices
                             error.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    startActivity(new Intent(Intent.ACTION_DELETE, Uri.parse("package:de.j4velin.systemappmover")));
+                                    startActivity(new Intent(Intent.ACTION_DELETE,
+                                            Uri.parse("package:de.j4velin.systemappmover")));
                                 }
                             });
                         }
@@ -138,8 +143,7 @@ public class MoverActivity extends Activity {
                     return;
                 }
                 final boolean root = RootTools.isAccessGiven();
-                if (progress == null || !progress.isShowing())
-                    return;
+                if (progress == null || !progress.isShowing()) return;
                 progress.cancel();
                 h.post(new Runnable() {
                     @Override
@@ -163,7 +167,8 @@ public class MoverActivity extends Activity {
                             busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
                             if (root) {
                                 new AppPicker(MoverActivity.this).execute();
-                                if (!getSharedPreferences("settings", MODE_PRIVATE).getBoolean("warningRead", false)) {
+                                if (!getSharedPreferences("settings", MODE_PRIVATE)
+                                        .getBoolean("warningRead", false)) {
                                     showWarningDialog();
                                 }
                             }
@@ -179,7 +184,8 @@ public class MoverActivity extends Activity {
 
                             return;
                         }
-                        error.setText("Use at your own risk! I won't take responsibility for damages on your device!");
+                        error.setText(
+                                "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
                     }
                 });
             }
