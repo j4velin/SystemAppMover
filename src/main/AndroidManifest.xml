@@ -2,14 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="de.j4velin.systemappmover"
           android:installLocation="auto"
-          android:versionCode="159"
-          android:versionName="1.5.9">
+          android:versionCode="160"
+          android:versionName="1.6">
 
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER"/>
 
     <uses-sdk
         android:minSdkVersion="4"
-        android:targetSdkVersion="17"/>
+        android:targetSdkVersion="21"/>
 
     <application
         android:allowBackup="true"
