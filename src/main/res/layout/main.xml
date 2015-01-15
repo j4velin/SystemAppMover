@@ -26,6 +26,12 @@
             android:text="Busybox" />
     </LinearLayout>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show system apps"
+        android:id="@+id/showsystem"/>
+
     <TextView
         android:id="@+id/error"
         android:layout_width="wrap_content"

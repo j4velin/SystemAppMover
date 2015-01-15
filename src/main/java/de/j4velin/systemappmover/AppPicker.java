@@ -26,6 +26,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -72,6 +73,14 @@ public class AppPicker extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         // load all apps and their icons, sort them alphabetical
         apps = pm.getInstalledApplications(0);
+        if (!MoverActivity.SHOW_SYSTEM_APPS) {
+            Iterator<ApplicationInfo> it = apps.iterator();
+            ApplicationInfo app;
+            while (it.hasNext()) {
+                app = it.next();
+                if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 1) it.remove();
+            }
+        }
         try {
             Collections.sort(apps, new Comparator<ApplicationInfo>() {
                 public int compare(final ApplicationInfo app1, final ApplicationInfo app2) {

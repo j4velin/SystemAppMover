@@ -151,6 +151,12 @@ public class AppClickListener implements OnItemClickListener {
                         }
 
                         if (BuildConfig.DEBUG) Logger.log("source: " + app.sourceDir);
+                        if (!new File(app.sourceDir).exists()) {
+                            if (BuildConfig.DEBUG) Logger.log("source does not exist?!?");
+                            ap.activity.showErrorDialog("Can not access source file");
+                            return;
+                        }
+
 
                         String mvcmd, newFile;
                         List<String> output;
@@ -163,15 +169,19 @@ public class AppClickListener implements OnItemClickListener {
                                     ap.activity.showErrorDialog("Can not remount /mnt/asec");
                                     return;
                                 }
-                                mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                                 if (BuildConfig.DEBUG)
                                     Logger.log("source ends with /pkg.apk -> paid app");
+                            } else if (app.sourceDir.endsWith("/base.apk")) {
+                                String appNameWithoutSpaces = appName.replace(" ","");
+                                newFile =
+                                        MoverActivity.SYSTEM_APP_FOLDER + appNameWithoutSpaces +
+                                                ".apk";
                             } else {
                                 newFile = app.sourceDir
                                         .replace("/data/app/", MoverActivity.SYSTEM_APP_FOLDER);
-                                mvcmd = "busybox mv " + app.sourceDir + " " +
-                                        MoverActivity.SYSTEM_APP_FOLDER;
                             }
+                            mvcmd = "busybox mv " + app.sourceDir + " " +
+                                    newFile;
                         } else {
                             if (app.sourceDir.endsWith("/pkg.apk")) {
                                 newFile = "/data/app/" + app.packageName + ".apk";

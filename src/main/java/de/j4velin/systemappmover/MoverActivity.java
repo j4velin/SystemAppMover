@@ -23,6 +23,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -44,6 +45,8 @@ public class MoverActivity extends Activity {
     final static String SYSTEM_APP_FOLDER =
             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ?
                     "/system/priv-app/" : "/system/app/";
+
+    public static boolean SHOW_SYSTEM_APPS = false;
 
     /**
      * Shows an error dialog with the specified text
@@ -165,13 +168,6 @@ public class MoverActivity extends Activity {
                             CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
                             busyBox.setChecked(true);
                             busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
-                            if (root) {
-                                new AppPicker(MoverActivity.this).execute();
-                                if (!getSharedPreferences("settings", MODE_PRIVATE)
-                                        .getBoolean("warningRead", false)) {
-                                    showWarningDialog();
-                                }
-                            }
                         } else {
                             error.setText("No busybox found!\nClick here to download");
                             error.setOnClickListener(new View.OnClickListener() {
@@ -184,8 +180,34 @@ public class MoverActivity extends Activity {
 
                             return;
                         }
-                        error.setText(
-                                "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
+                        if (root) {
+                            new AppPicker(MoverActivity.this).execute();
+                            if (!getSharedPreferences("settings", MODE_PRIVATE)
+                                    .getBoolean("warningRead", false)) {
+                                showWarningDialog();
+                            }
+                            error.setText(
+                                    "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
+                            final CheckBox showSystem = (CheckBox) findViewById(R.id.showsystem);
+                            showSystem.setOnCheckedChangeListener(
+                                    new CompoundButton.OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
+                                            if (Build.VERSION.SDK_INT >=
+                                                    Build.VERSION_CODES.LOLLIPOP) {
+                                                if (isChecked) {
+                                                    showErrorDialog(
+                                                            "Moving system apps does currently not work on Android 5.+");
+                                                    showSystem.setChecked(false);
+                                                }
+                                            } else {
+                                                SHOW_SYSTEM_APPS = isChecked;
+                                                new AppPicker(MoverActivity.this).execute();
+                                            }
+                                        }
+                                    });
+                        }
+
                     }
                 });
             }
