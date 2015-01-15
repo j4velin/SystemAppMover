@@ -69,6 +69,34 @@ public class MoverActivity extends Activity {
     }
 
     /**
+     * Shows another warning when enabling the 'show system apps' option
+     */
+    void showSystemAppWarningDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Warning").setMessage(
+                "Moving system apps is NOT recommended and will most definitely damage something on your system when doing so. Did you make a backup?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        try {
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, int id) {
+                try {
+                    dialog.dismiss();
+                    showErrorDialog("You should!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.create().show();
+    }
+
+    /**
      * Shows the initial warning dialog
      */
     void showWarningDialog() {
@@ -203,6 +231,7 @@ public class MoverActivity extends Activity {
                                             } else {
                                                 SHOW_SYSTEM_APPS = isChecked;
                                                 new AppPicker(MoverActivity.this).execute();
+                                                if (isChecked) showSystemAppWarningDialog();
                                             }
                                         }
                                     });
