@@ -1,10 +1,10 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:+'
     }
 }
 
@@ -38,6 +38,9 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
 
 dependencies {
     compile files('RootTools2.6.jar')
