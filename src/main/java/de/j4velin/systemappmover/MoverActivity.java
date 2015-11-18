@@ -73,10 +73,9 @@ public class MoverActivity extends Activity {
     /**
      * Shows another warning when enabling the 'show system apps' option
      */
-    void showSystemAppWarningDialog() {
+    void showSystemAppWarningDialog(final String text) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Warning").setMessage(
-                "Moving system apps is NOT recommended and will most definitely damage something on your system when doing so. Did you make a backup?")
+        builder.setTitle("Warning").setMessage(text + " Did you make a backup?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int id) {
                         try {
@@ -179,70 +178,79 @@ public class MoverActivity extends Activity {
                 if (progress == null || !progress.isShowing()) return;
                 progress.cancel();
                 h.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (root) {
-                            ((CheckBox) findViewById(R.id.root)).setChecked(true);
-                        } else {
-                            error.setText("No root access granted - click here to recheck");
-                            error.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    checkForRoot();
-                                }
-                            });
-                            return;
-                        }
+                           @Override
+                           public void run() {
+                               if (root) {
+                                   ((CheckBox) findViewById(R.id.root)).setChecked(true);
+                               } else {
+                                   error.setText("No root access granted - click here to recheck");
+                                   error.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           checkForRoot();
+                                       }
+                                   });
+                                   return;
+                               }
 
-                        if (RootTools.isBusyboxAvailable()) {
-                            CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
-                            busyBox.setChecked(true);
-                            busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
-                        } else {
-                            error.setText("No busybox found!\nClick here to download");
-                            error.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    RootTools.offerBusyBox(MoverActivity.this);
-                                    finish();
-                                }
-                            });
+                               if (RootTools.isBusyboxAvailable()) {
+                                   CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
+                                   busyBox.setChecked(true);
+                                   busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
+                               } else {
+                                   error.setText("No busybox found!\nClick here to download");
+                                   error.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           RootTools.offerBusyBox(MoverActivity.this);
+                                           finish();
+                                       }
+                                   });
 
-                            return;
-                        }
-                        if (root) {
-                            new AppPicker(MoverActivity.this).execute();
-                            if (!getSharedPreferences("settings", MODE_PRIVATE)
-                                    .getBoolean("warningRead", false)) {
-                                showWarningDialog();
-                            }
-                            error.setText(
-                                    "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
-                            final CheckBox showSystem = (CheckBox) findViewById(R.id.showsystem);
-                            showSystem.setOnCheckedChangeListener(
-                                    new CompoundButton.OnCheckedChangeListener() {
-                                        @Override
-                                        public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
-                                            if (Build.VERSION.SDK_INT >=
-                                                    Build.VERSION_CODES.LOLLIPOP) {
-                                                if (isChecked) {
-                                                    showErrorDialog(
-                                                            "Moving system apps does currently not work on Android 5.+");
-                                                    showSystem.setChecked(false);
-                                                }
-                                            } else {
-                                                SHOW_SYSTEM_APPS = isChecked;
-                                                new AppPicker(MoverActivity.this).execute();
-                                                if (isChecked) showSystemAppWarningDialog();
-                                            }
-                                        }
-                                    });
-                        }
+                                   return;
+                               }
+                               if (root) {
+                                   new AppPicker(MoverActivity.this).execute();
+                                   if (!getSharedPreferences("settings", MODE_PRIVATE)
+                                           .getBoolean("warningRead", false)) {
+                                       showWarningDialog();
+                                   }
+                                   error.setText(
+                                           "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
+                                   final CheckBox showSystem =
+                                           (CheckBox) findViewById(R.id.showsystem);
+                                   showSystem.setOnCheckedChangeListener(
+                                           new CompoundButton.OnCheckedChangeListener() {
+                                               @Override
+                                               public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
+                                                   SHOW_SYSTEM_APPS = isChecked;
+                                                   new AppPicker(MoverActivity.this).execute();
+                                                   if (isChecked) {
+                                                       String warning =
+                                                               "Moving system apps is NOT recommended and will most definitely damage something on your system when doing so.";
+                                                       if (Build.VERSION.SDK_INT >=
+                                                               Build.VERSION_CODES.LOLLIPOP) {
+                                                           warning +=
+                                                                   " On Android 5.0+, this feature is highly experimental and most system apps won\'t ever work again once moved!";
+                                                       }
+                                                       showSystemAppWarningDialog(warning);
+                                                   }
 
-                    }
-                });
+
+                                               }
+                                           });
+                               }
+
+                           }
+                       }
+
+                );
             }
-        }).start();
+        }
+
+        ).
+
+                start();
     }
 
 }
