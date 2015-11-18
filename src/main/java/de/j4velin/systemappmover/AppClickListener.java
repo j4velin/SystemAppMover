@@ -158,7 +158,7 @@ public class AppClickListener implements OnItemClickListener {
                         }
 
 
-                        String mvcmd, newFile;
+                        String newFile;
                         List<String> output;
                         if (!alreadySys) {
                             if (app.sourceDir.endsWith("/pkg.apk")) {
@@ -173,18 +173,17 @@ public class AppClickListener implements OnItemClickListener {
                                     Logger.log("source ends with /pkg.apk -> paid app");
                             } else if (app.sourceDir.endsWith("/base.apk")) {
                                 String appNameWithoutSpaces = appName.replace(" ", "");
-                                newFile = MoverActivity.SYSTEM_DIR_TARGET + appNameWithoutSpaces +
+                                // also remove other 'special' characters
+                                newFile = MoverActivity.SYSTEM_DIR_TARGET +
+                                        appNameWithoutSpaces.replaceAll("[^a-zA-Z0-9]+", "") +
                                         ".apk";
                             } else {
                                 newFile = app.sourceDir
                                         .replace("/data/app/", MoverActivity.SYSTEM_DIR_TARGET);
                             }
-                            mvcmd = "busybox mv " + app.sourceDir + " " +
-                                    newFile;
                         } else {
                             if (app.sourceDir.endsWith("/pkg.apk")) {
                                 newFile = "/data/app/" + app.packageName + ".apk";
-                                mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                             } else {
                                 if (app.sourceDir.contains(MoverActivity.SYSTEM_FOLDER_1)) {
                                     newFile = app.sourceDir
@@ -193,9 +192,9 @@ public class AppClickListener implements OnItemClickListener {
                                     newFile = app.sourceDir
                                             .replace(MoverActivity.SYSTEM_FOLDER_2, "/data/app/");
                                 }
-                                mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                             }
                         }
+                        String mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                         if (BuildConfig.DEBUG) Logger.log("command: " + mvcmd);
 
                         output = RootTools.sendShell(mvcmd, 10000);
