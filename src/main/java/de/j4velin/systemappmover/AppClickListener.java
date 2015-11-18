@@ -56,7 +56,7 @@ public class AppClickListener implements OnItemClickListener {
 
         // update necessary?
         if ((tmpAlreadySys && tmp.sourceDir.contains("/data/app/")) ||
-                (!tmpAlreadySys && tmp.sourceDir.contains(MoverActivity.SYSTEM_APP_FOLDER))) {
+                (!tmpAlreadySys && tmp.sourceDir.contains("/system/"))) {
             try {
                 tmp = ap.pm.getApplicationInfo(tmp.packageName, 0);
             } catch (NameNotFoundException e1) {
@@ -102,7 +102,7 @@ public class AppClickListener implements OnItemClickListener {
             });
             builder.create().show();
             return;
-        } else if (!alreadySys && tmp.sourceDir.contains(MoverActivity.SYSTEM_APP_FOLDER)) {
+        } else if (!alreadySys && tmp.sourceDir.contains("/system/")) {
             ap.activity.showErrorDialog("Can not move " + appName +
                     ": Undefined app status. You might need to reboot once.");
             if (BuildConfig.DEBUG) Logger.log(
@@ -162,7 +162,7 @@ public class AppClickListener implements OnItemClickListener {
                         List<String> output;
                         if (!alreadySys) {
                             if (app.sourceDir.endsWith("/pkg.apk")) {
-                                newFile = MoverActivity.SYSTEM_APP_FOLDER + app.packageName +
+                                newFile = MoverActivity.SYSTEM_DIR_TARGET + app.packageName +
                                         "-asec.apk";
                                 if (!RootTools.remount("/mnt", "rw")) {
                                     if (BuildConfig.DEBUG) Logger.log("Can not remount /mnt");
@@ -172,13 +172,12 @@ public class AppClickListener implements OnItemClickListener {
                                 if (BuildConfig.DEBUG)
                                     Logger.log("source ends with /pkg.apk -> paid app");
                             } else if (app.sourceDir.endsWith("/base.apk")) {
-                                String appNameWithoutSpaces = appName.replace(" ","");
-                                newFile =
-                                        MoverActivity.SYSTEM_APP_FOLDER + appNameWithoutSpaces +
-                                                ".apk";
+                                String appNameWithoutSpaces = appName.replace(" ", "");
+                                newFile = MoverActivity.SYSTEM_DIR_TARGET + appNameWithoutSpaces +
+                                        ".apk";
                             } else {
                                 newFile = app.sourceDir
-                                        .replace("/data/app/", MoverActivity.SYSTEM_APP_FOLDER);
+                                        .replace("/data/app/", MoverActivity.SYSTEM_DIR_TARGET);
                             }
                             mvcmd = "busybox mv " + app.sourceDir + " " +
                                     newFile;
@@ -187,9 +186,14 @@ public class AppClickListener implements OnItemClickListener {
                                 newFile = "/data/app/" + app.packageName + ".apk";
                                 mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                             } else {
-                                newFile = app.sourceDir
-                                        .replace(MoverActivity.SYSTEM_APP_FOLDER, "/data/app/");
-                                mvcmd = "busybox mv " + app.sourceDir + " /data/app/";
+                                if (app.sourceDir.contains(MoverActivity.SYSTEM_FOLDER_1)) {
+                                    newFile = app.sourceDir
+                                            .replace(MoverActivity.SYSTEM_FOLDER_1, "/data/app/");
+                                } else {
+                                    newFile = app.sourceDir
+                                            .replace(MoverActivity.SYSTEM_FOLDER_2, "/data/app/");
+                                }
+                                mvcmd = "busybox mv " + app.sourceDir + " " + newFile;
                             }
                         }
                         if (BuildConfig.DEBUG) Logger.log("command: " + mvcmd);
@@ -206,7 +210,6 @@ public class AppClickListener implements OnItemClickListener {
                             if (BuildConfig.DEBUG) Logger.log(error);
                             ap.activity.showErrorDialog(error);
                         } else {
-
                             File f = new File(newFile);
 
                             for (int i = 0; f.length() < 1 && i < 20; i++) {

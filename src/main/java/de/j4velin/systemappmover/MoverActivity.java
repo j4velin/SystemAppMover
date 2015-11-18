@@ -42,9 +42,11 @@ import com.stericson.RootTools.RootTools;
  */
 public class MoverActivity extends Activity {
 
-    final static String SYSTEM_APP_FOLDER =
-            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT ?
-                    "/system/priv-app/" : "/system/app/";
+    public final static String SYSTEM_FOLDER_1 = "/system/priv-app/";
+    public final static String SYSTEM_FOLDER_2 = "/system/app/";
+
+    public final static String SYSTEM_DIR_TARGET =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? SYSTEM_FOLDER_1 : SYSTEM_FOLDER_2;
 
     public static boolean SHOW_SYSTEM_APPS = false;
 
