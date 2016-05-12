@@ -34,6 +34,8 @@ import android.widget.TextView;
 
 import com.stericson.RootTools.RootTools;
 
+import java.io.File;
+
 /**
  * The main activity.
  * <p/>
@@ -154,7 +156,8 @@ public class MoverActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (!RootTools.isRootAvailable()) {
+                boolean systemlessRoot = new File("/su").exists();
+                if (!systemlessRoot && !RootTools.isRootAvailable()) {
                     if (progress == null || !progress.isShowing()) return;
                     progress.cancel();
                     h.post(new Runnable() {
@@ -174,7 +177,7 @@ public class MoverActivity extends Activity {
                     });
                     return;
                 }
-                final boolean root = RootTools.isAccessGiven();
+                final boolean root = systemlessRoot || RootTools.isAccessGiven();
                 if (progress == null || !progress.isShowing()) return;
                 progress.cancel();
                 h.post(new Runnable() {
@@ -206,8 +209,6 @@ public class MoverActivity extends Activity {
                                            finish();
                                        }
                                    });
-
-                                   return;
                                }
                                if (root) {
                                    new AppPicker(MoverActivity.this).execute();
