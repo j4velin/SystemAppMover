@@ -196,7 +196,8 @@ public class MoverActivity extends Activity {
                                    return;
                                }
 
-                               if (RootTools.isBusyboxAvailable()) {
+                               if (new File("/su/xbin/busybox").exists() ||
+                                       RootTools.isBusyboxAvailable()) {
                                    CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
                                    busyBox.setChecked(true);
                                    busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
@@ -223,7 +224,9 @@ public class MoverActivity extends Activity {
                                    showSystem.setOnCheckedChangeListener(
                                            new CompoundButton.OnCheckedChangeListener() {
                                                @Override
-                                               public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
+                                               public void onCheckedChanged(
+                                                       final CompoundButton buttonView,
+                                                       boolean isChecked) {
                                                    SHOW_SYSTEM_APPS = isChecked;
                                                    new AppPicker(MoverActivity.this).execute();
                                                    if (isChecked) {
