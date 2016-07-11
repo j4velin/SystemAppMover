@@ -16,9 +16,10 @@
 
 package de.j4velin.systemappmover;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,7 +43,7 @@ import java.io.File;
  * All the logic starts in the AppPicker, which is started from the checkForRoot
  * method if root is available
  */
-public class MoverActivity extends Activity {
+public class MoverActivity extends AppCompatActivity {
 
     public final static String SYSTEM_FOLDER_1 = "/system/priv-app/";
     public final static String SYSTEM_FOLDER_2 = "/system/app/";
@@ -103,7 +104,7 @@ public class MoverActivity extends Activity {
      * Shows the initial warning dialog
      */
     void showWarningDialog() {
-        final Dialog d = new Dialog(this);
+        final AppCompatDialog d = new AppCompatDialog(this);
         d.setTitle("Warning");
         d.setCancelable(false);
         d.setContentView(R.layout.warningdialog);
