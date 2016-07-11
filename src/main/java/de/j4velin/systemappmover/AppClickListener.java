@@ -16,9 +16,10 @@
 
 package de.j4velin.systemappmover;
 
+import android.support.v7.app.AlertDialog;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
