@@ -14,3 +14,5 @@ Apps which are <b>moved to SD card</b> need to be moved back to internal memory 
 This app <u>requires a rooted device with BusyBox installed.</u> Don't install this app if you don't know what that means!
 
 This app uses the RootTools Project (https://github.com/Stericson/RootTools) library.
+
+<img src="https://travis-ci.org/j4velin/SystemAppMover.svg?branch=master" />
