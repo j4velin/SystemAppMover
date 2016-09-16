@@ -15,4 +15,4 @@ This app <u>requires a rooted device with BusyBox installed.</u> Don't install t
 
 This app uses the RootTools Project (https://github.com/Stericson/RootTools) library.
 
-<img src="https://travis-ci.org/j4velin/SystemAppMover.svg?branch=master" />
+[![Build Status](https://travis-ci.org/j4velin/SystemAppMover.svg?branch=master)](https://travis-ci.org/j4velin/SystemAppMover)
