@@ -16,8 +16,6 @@
 
 package de.j4velin.systemappmover;
 
-import android.support.v7.app.AlertDialog;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.Context;
@@ -28,6 +26,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -45,7 +44,8 @@ public class AppClickListener implements OnItemClickListener {
         ap = a;
     }
 
-    public void onItemClick(final AdapterView<?> parent, final View view, final int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position,
+                            long id) {
         if (position >= ap.apps.size()) return;
 
         if ("MOVED".equals(view.getTag())) {
@@ -112,21 +112,24 @@ public class AppClickListener implements OnItemClickListener {
             return;
         }
 
+        String warning = null;
+
         if (!alreadySys && app.sourceDir.endsWith("pkg.apk")) {
             if (app.sourceDir.contains("asec")) {
-                if (BuildConfig.DEBUG) Logger.log("Paid app? Path = " + app.sourceDir);
-                ap.activity.showErrorDialog(appName +
-                        " seems to be a paid app and therefore can not be converted to system app due to limitations by the Android system");
+                if (BuildConfig.DEBUG) Logger.log("Encrypted app? Path = " + app.sourceDir);
+                warning = appName +
+                        " seems to be an encrypted app and therefore might not be convertible to a system app! Continue at your own risk!";
             } else {
                 if (BuildConfig.DEBUG) Logger.log("SD card? " + app.sourceDir);
                 ap.activity.showErrorDialog(appName +
                         " is currently installed on SD card. Please move to internal memory before moving to /system/app/");
+                return;
             }
-            return;
         }
 
         AlertDialog.Builder b = new AlertDialog.Builder(ap.activity);
-        b.setMessage("Convert " + appName + " to " + (alreadySys ? "normal" : "system") + " app?");
+        b.setMessage("Convert " + appName + " to " + (alreadySys ? "normal" : "system") + " app?" +
+                (warning != null ? "\n\nWarning: " + warning : ""));
         b.setPositiveButton(android.R.string.yes, new OnClickListener() {
                     @SuppressWarnings("deprecation")
                     @Override
@@ -160,26 +163,13 @@ public class AppClickListener implements OnItemClickListener {
                                     return;
                                 }
 
-                                String fallbackFilename =
-                                        appName.replace(" ", "").replaceAll("[^a-zA-Z0-9]+", "");
+                                String fallbackFilename = appName.replaceAll("[^a-zA-Z0-9]+", "");
 
                                 String newFile;
                                 List<String> output;
                                 if (!alreadySys) {
-                                    if (app.sourceDir.endsWith("/pkg.apk")) {
-                                        newFile =
-                                                MoverActivity.SYSTEM_DIR_TARGET + app.packageName +
-                                                        "-asec.apk";
-                                        if (!RootTools.remount("/mnt", "rw")) {
-                                            if (BuildConfig.DEBUG)
-                                                Logger.log("Can not remount /mnt");
-                                            ap.activity
-                                                    .showErrorDialog("Can not remount /mnt/asec");
-                                            return;
-                                        }
-                                        if (BuildConfig.DEBUG)
-                                            Logger.log("source ends with /pkg.apk -> paid app");
-                                    } else if (app.sourceDir.endsWith("/base.apk")) {
+                                    if (app.sourceDir.endsWith("/pkg.apk") ||
+                                            app.sourceDir.endsWith("/base.apk")) {
                                         newFile =
                                                 MoverActivity.SYSTEM_DIR_TARGET + fallbackFilename +
                                                         ".apk";
@@ -272,7 +262,9 @@ public class AppClickListener implements OnItemClickListener {
                                         b2.setPositiveButton(android.R.string.yes,
                                                 new OnClickListener() {
                                                     @Override
-                                                    public void onClick(final DialogInterface dialog, int which) {
+                                                    public void onClick(
+                                                            final DialogInterface dialog,
+                                                            int which) {
                                                         if (BuildConfig.DEBUG)
                                                             Logger.log("reboot now");
                                                         ap.activity.sendBroadcast(new Intent(
@@ -288,7 +280,7 @@ public class AppClickListener implements OnItemClickListener {
                                                             try {
                                                                 Thread.sleep(1000);
                                                             } catch (InterruptedException e) {
-                                                            }
+                                                    }
                                                             RootTools.sendShell("reboot", 5000);
                                                         } catch (Exception e) {
                                                         }
@@ -297,7 +289,9 @@ public class AppClickListener implements OnItemClickListener {
                                         b2.setNegativeButton(android.R.string.no,
                                                 new OnClickListener() {
                                                     @Override
-                                                    public void onClick(final DialogInterface dialog, int which) {
+                                                    public void onClick(
+                                                            final DialogInterface dialog,
+                                                            int which) {
                                                         if (BuildConfig.DEBUG)
                                                             Logger.log("no reboot");
                                                         try {
@@ -334,15 +328,15 @@ public class AppClickListener implements OnItemClickListener {
         );
         b.setNegativeButton(android.R.string.no, new
 
-                        OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    dialog.dismiss();
-                                } catch (Exception e) {
-                                }
-                            }
+                OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            dialog.dismiss();
+                        } catch (Exception e) {
                         }
+                    }
+                }
 
         );
         b.create().
