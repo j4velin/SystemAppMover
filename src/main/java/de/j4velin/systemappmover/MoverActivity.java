@@ -16,17 +16,17 @@
 
 package de.j4velin.systemappmover;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialog;
-
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -207,7 +207,13 @@ public class MoverActivity extends AppCompatActivity {
                                    error.setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View v) {
-                                           RootTools.offerBusyBox(MoverActivity.this);
+                                           try {
+                                               RootTools.offerBusyBox(MoverActivity.this);
+                                           } catch (ActivityNotFoundException anfe) {
+                                               MoverActivity.this.startActivity(
+                                                       new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                               "https://play.google.com/store/apps/details?id=stericson.busybox")));
+                                           }
                                            finish();
                                        }
                                    });
