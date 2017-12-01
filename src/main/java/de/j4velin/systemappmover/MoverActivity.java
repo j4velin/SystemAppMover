@@ -159,7 +159,7 @@ public class MoverActivity extends AppCompatActivity {
             public void run() {
                 boolean systemlessRoot = new File("/su").exists();
                 if (!systemlessRoot && !RootTools.isRootAvailable()) {
-                    if (progress == null || !progress.isShowing()) return;
+                    if (!progress.isShowing()) return;
                     progress.cancel();
                     h.post(new Runnable() {
                         @Override
@@ -179,89 +179,77 @@ public class MoverActivity extends AppCompatActivity {
                     return;
                 }
                 final boolean root = systemlessRoot || RootTools.isAccessGiven();
-                if (progress == null || !progress.isShowing()) return;
+                if (!progress.isShowing()) return;
                 progress.cancel();
                 h.post(new Runnable() {
-                           @Override
-                           public void run() {
-                               if (root) {
-                                   ((CheckBox) findViewById(R.id.root)).setChecked(true);
-                               } else {
-                                   error.setText("No root access granted - click here to recheck");
-                                   error.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-                                           checkForRoot();
-                                       }
-                                   });
-                                   return;
-                               }
+                    @Override
+                    public void run() {
+                        if (root) {
+                            ((CheckBox) findViewById(R.id.root)).setChecked(true);
+                        } else {
+                            error.setText("No root access granted - click here to recheck");
+                            error.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    checkForRoot();
+                                }
+                            });
+                            return;
+                        }
 
-                               if (new File("/su/xbin/busybox").exists() ||
-                                       RootTools.isBusyboxAvailable()) {
-                                   CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
-                                   busyBox.setChecked(true);
-                                   busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
-                               } else {
-                                   error.setText("No busybox found!\nClick here to download");
-                                   error.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-                                           try {
-                                               RootTools.offerBusyBox(MoverActivity.this);
-                                           } catch (ActivityNotFoundException anfe) {
-                                               MoverActivity.this.startActivity(
-                                                       new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                                               "https://play.google.com/store/apps/details?id=stericson.busybox")));
-                                           }
-                                           finish();
-                                       }
-                                   });
-                               }
-                               if (root) {
-                                   new AppPicker(MoverActivity.this).execute();
-                                   if (!getSharedPreferences("settings", MODE_PRIVATE)
-                                           .getBoolean("warningRead", false)) {
-                                       showWarningDialog();
-                                   }
-                                   error.setText(
-                                           "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
-                                   final CheckBox showSystem =
-                                           (CheckBox) findViewById(R.id.showsystem);
-                                   showSystem.setOnCheckedChangeListener(
-                                           new CompoundButton.OnCheckedChangeListener() {
-                                               @Override
-                                               public void onCheckedChanged(
-                                                       final CompoundButton buttonView,
-                                                       boolean isChecked) {
-                                                   SHOW_SYSTEM_APPS = isChecked;
-                                                   new AppPicker(MoverActivity.this).execute();
-                                                   if (isChecked) {
-                                                       String warning =
-                                                               "Moving system apps is NOT recommended and will most definitely damage something on your system when doing so.";
-                                                       if (Build.VERSION.SDK_INT >=
-                                                               Build.VERSION_CODES.LOLLIPOP) {
-                                                           warning +=
-                                                                   " On Android 5.0+, this feature is highly experimental and most system apps won\'t ever work again once moved!";
-                                                       }
-                                                       showSystemAppWarningDialog(warning);
-                                                   }
-
-
-                                               }
-                                           });
-                               }
-
-                           }
-                       }
-
-                );
+                        if (new File("/su/xbin/busybox").exists() ||
+                                RootTools.isBusyboxAvailable()) {
+                            CheckBox busyBox = (CheckBox) findViewById(R.id.busybox);
+                            busyBox.setChecked(true);
+                            busyBox.setText("BusyBox " + RootTools.getBusyBoxVersion());
+                            new AppPicker(MoverActivity.this).execute();
+                            if (!getSharedPreferences("settings", MODE_PRIVATE)
+                                    .getBoolean("warningRead", false)) {
+                                showWarningDialog();
+                            }
+                            error.setText(
+                                    "Use at your own risk! I won't take responsibility for damages on your device! Make a backup first!");
+                            final CheckBox showSystem = (CheckBox) findViewById(R.id.showsystem);
+                            showSystem.setOnCheckedChangeListener(
+                                    new CompoundButton.OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(
+                                                final CompoundButton buttonView,
+                                                boolean isChecked) {
+                                            SHOW_SYSTEM_APPS = isChecked;
+                                            new AppPicker(MoverActivity.this).execute();
+                                            if (isChecked) {
+                                                String warning =
+                                                        "Moving system apps is NOT recommended and will most definitely damage something on your system when doing so.";
+                                                if (Build.VERSION.SDK_INT >=
+                                                        Build.VERSION_CODES.LOLLIPOP) {
+                                                    warning +=
+                                                            " On Android 5.0+, this feature is highly experimental and most system apps won\'t ever work again once moved!";
+                                                }
+                                                showSystemAppWarningDialog(warning);
+                                            }
+                                        }
+                                    });
+                        } else {
+                            error.setText("No busybox found!\nClick here to download");
+                            error.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        RootTools.offerBusyBox(MoverActivity.this);
+                                    } catch (ActivityNotFoundException anfe) {
+                                        MoverActivity.this.startActivity(
+                                                new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                                        "https://play.google.com/store/apps/details?id=stericson.busybox")));
+                                    }
+                                    finish();
+                                }
+                            });
+                        }
+                    }
+                });
             }
-        }
-
-        ).
-
-                start();
+        }).start();
     }
 
 }
