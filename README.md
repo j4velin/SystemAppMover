@@ -1,5 +1,6 @@
 SystemAppMover
 ==============
+![icon](https://raw.githubusercontent.com/j4velin/SystemAppMover/master/src/main/res/mipmap-xhdpi/ic_launcher.png) 
 
 <b>REQUIRES ROOT! USE AT YOUR OWN RISK!</b>
 <br/>
@@ -16,5 +17,6 @@ This app <u>requires a rooted device with BusyBox installed.</u> Don't install t
 This app uses the RootTools Project (https://github.com/Stericson/RootTools) library.
 
 Icon provided by https://utopian.io/@jaldesign
+
 
 [![Build Status](https://travis-ci.org/j4velin/SystemAppMover.svg?branch=master)](https://travis-ci.org/j4velin/SystemAppMover)
