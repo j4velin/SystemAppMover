@@ -1,5 +1,8 @@
 SystemAppMover
 ==============
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ![icon](https://raw.githubusercontent.com/j4velin/SystemAppMover/master/src/main/res/mipmap-xhdpi/ic_launcher.png) 
 
 <b>REQUIRES ROOT! USE AT YOUR OWN RISK!</b>
