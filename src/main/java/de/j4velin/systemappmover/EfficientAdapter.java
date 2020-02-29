@@ -41,7 +41,7 @@ public class EfficientAdapter extends BaseAdapter {
 		return ap.apps.size();
 	}
 
-	public Object getItem(int position) {
+	public static Object getItem(int position) {
 		return position;
 	}
 
